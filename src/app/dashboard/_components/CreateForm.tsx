@@ -14,7 +14,7 @@ import { useUser } from "@clerk/nextjs";
 import { db } from "@/db";
 import { JsonForms } from "@/db/schema";
 
-const PROMPT = ', On the basis of description please give form in json format with form title , form subheading, form field, form name, placeholder name, and form label, in Json format'
+const PROMPT = ',On Basis of description create JSON form with formTitle, formHeading along with fieldName, FieldTitle,FieldType, Placeholder, label , required fields, and checkbox and select field type options will be in array only and in JSON format'
 
 function CreateForm() {
 
