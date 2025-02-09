@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Progress } from "@radix-ui/themes";
+import { Progress } from "@/components/ui/progress";
 import { ChartLine, LibraryBig, MessageSquare, Shield,Plus } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -54,15 +54,16 @@ function SideNavBar() {
             </li>
           ))}
         </ul>
+      </div>
         <div className="fixed bottom-20 p-6 w-64">
             <Button className="bg-lime-950 w-full">
                 <Plus/>{` Create Form`}
             </Button>
-            <div>
-                <Progress value={39}/>
+            <div className="my-7">
+                <Progress value={33}/>
+                <h2 className="text-gray-700"><strong>2 </strong> Out of <strong> 3 </strong>File Created</h2>
             </div>
         </div>
-      </div>
     </div>
   );
 }
