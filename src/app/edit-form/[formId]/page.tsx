@@ -3,13 +3,15 @@ import { db } from "@/db";
 import { JsonForms } from "@/db/schema";
 import { useUser } from "@clerk/nextjs";
 import { and, eq } from "drizzle-orm";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Share2, SquareArrowOutUpRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { use, useCallback, useEffect, useState } from "react";
 import FormUi from "../_components/FormUi";
 import { Field, Form } from "@/types";
 import { useToast } from "@/hooks/use-toast";
 import Controller from "../_components/Controller";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 function EditForm({ params }: { params: Promise<{ formId: string }> }) {
   const { toast } = useToast();
@@ -20,7 +22,10 @@ function EditForm({ params }: { params: Promise<{ formId: string }> }) {
   const [jsonForms, setJsonForms] = useState<Form | undefined>();
   const [selectedTheme, setSelectedTheme] = useState("light");
   const [selectedBackground, setSelectedBackground] = useState("");
-  const [selectedStyle, setSelectedStyle] = useState<{ key: string; value: string }>();
+  const [selectedStyle, setSelectedStyle] = useState<{
+    key: string;
+    value: string;
+  }>();
 
   const GetFormData = useCallback(async () => {
     if (!user || !actualParams?.formId) {
@@ -43,7 +48,7 @@ function EditForm({ params }: { params: Promise<{ formId: string }> }) {
       setJsonForms(JSON.parse(result[0].jsonform)[0]);
       setSelectedTheme(result[0].theme || "");
       setSelectedBackground(result[0].background || "");
-      setSelectedStyle(JSON.parse(result[0].style || ""))
+      setSelectedStyle(JSON.parse(result[0].style || ""));
     } catch (error) {
       console.error("Error al obtener datos:", error);
     }
@@ -142,7 +147,7 @@ function EditForm({ params }: { params: Promise<{ formId: string }> }) {
     const result = await db
       .update(JsonForms)
       .set({
-        style: JSON.stringify(style), // Convertimos el objeto a string para almacenarlo en la base de datos
+        style: JSON.stringify(style),
       })
       .where(
         and(
@@ -151,7 +156,7 @@ function EditForm({ params }: { params: Promise<{ formId: string }> }) {
         )
       )
       .returning({ id: JsonForms.id });
-  
+
     if (result) {
       toast({
         description: "Estilo actualizado correctamente",
@@ -159,15 +164,29 @@ function EditForm({ params }: { params: Promise<{ formId: string }> }) {
     }
   };
 
-  console.log(selectedStyle)
+  console.log(selectedStyle);
   return (
     <div className="p-10">
-      <h2
-        className="w-20 flex gap-2 items-center my-5 cursor-pointer hover:font-bold"
-        onClick={() => router.back()}
-      >
-        <ArrowLeft /> Back
-      </h2>
+      <div className="flex justify-between items-center">
+        <h2
+          className="flex gap-2 items-center my-5 cursor-pointer hover:font-bold"
+          onClick={() => router.back()}
+        >
+          <ArrowLeft /> Back
+        </h2>
+        <div className="flex gap-2">
+          <Link href={`/aiform/${actualParams.formId}`} target="_blank">
+            <Button className="flex gap-2">
+              {" "}
+              <SquareArrowOutUpRight className="h-5 w-5" /> Live Preciew
+            </Button>
+          </Link>
+          <Button className="flex gap-2">
+            {" "}
+            <Share2 className="h-5 w-5" /> Share
+          </Button>
+        </div>
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
         <div className="p-5 border rounded-lg shadow-md">
           <Controller
@@ -180,7 +199,7 @@ function EditForm({ params }: { params: Promise<{ formId: string }> }) {
               setSelectedBackground(value);
             }}
             selectedStyle={(value) => {
-              updateStyle(value); // Usamos la nueva función updateStyle
+              updateStyle(value);
               setSelectedStyle(value);
             }}
           />
@@ -193,12 +212,15 @@ function EditForm({ params }: { params: Promise<{ formId: string }> }) {
           }}
         >
           <FormUi
-        jsonForm={jsonForms}
-        selectedTheme={selectedTheme}
-        selectedStyle={selectedStyle}
-        onFieldUpdate={handleFieldUpdate}
-        deleteField={(index) => deleteField(index)}
-      />
+            jsonForm={jsonForms}
+            selectedTheme={selectedTheme}
+            selectedStyle={selectedStyle}
+            onFieldUpdate={handleFieldUpdate}
+            deleteField={(index) => deleteField(index)}
+            editable={true}
+            formId={jsonForms?.id || ""}
+            enabledSignIn={jsonForms?.enabledSignIn ?? false}
+          />
         </div>
       </div>
     </div>

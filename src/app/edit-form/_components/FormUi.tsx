@@ -19,7 +19,7 @@ function FormUi({
   onFieldUpdate,
   deleteField,
   selectedTheme,
-  selectedStyle
+  selectedStyle,
 }: FormUiProps) {
   const form = jsonForm;
 
