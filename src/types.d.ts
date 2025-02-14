@@ -14,12 +14,15 @@ export interface Field {
 }
 
 export interface Form {
+  id: string;
   formTitle: string;
   formHeading?: string;
   fields: Field[];
-  theme?: string; 
+  theme?: string;
   background?: string;
+  enabledSignIn?: boolean | null; // ✅ Agregado
 }
+
 
 export interface FieldEditProps {
   defaultValue: Field;
@@ -31,21 +34,13 @@ export interface FormUiProps {
   jsonForm?: Form;
   onFieldUpdate: (index: number, updatedField: Field) => void;
   deleteField: (index: number) => void;
-  selectedTheme: string;
-  selectedStyle?: { key: string; value: string }; // Agregamos selectedStyle
+  selectedTheme?: string; // Hacemos opcional en caso de que no siempre esté presente
+  selectedStyle?: { key: string; value: string };
+  editable: boolean; // Nueva prop para definir si el formulario es editable o no
+  formId: string; // ID del formulario
+  enabledSignIn?: boolean | null; // Estado de autenticación
 }
 
-interface Theme {
-  theme: string;
-  primary: string;
-  secondary: string;
-  accent: string;
-  neutral: string;
-}
-
-interface Background {
-  gradient: string;
-}
 
 export interface ControllerProps {
   selectedTheme: (theme: string) => void;
@@ -53,3 +48,13 @@ export interface ControllerProps {
   selectedStyle: (style: { key: string; value: string }) => void; // Agregamos selectedStyle
 }
 
+export interface JsonFormRecord {
+  id: string;
+    jsonform: string;
+    theme: string;
+    background?: string;
+    style?: { key: string; value: string };
+    createdBy: string;
+    createdAt: string;
+    enabledSignIn: boolean | null;
+}
