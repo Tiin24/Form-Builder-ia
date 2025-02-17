@@ -14,9 +14,7 @@ function DashboardLayout({ children }: DashboardLayoutProps) {
         <div className="md:w-64 fixed">
           <SideNavBar />
         </div>
-        <div className="md:ml-64">
-        {children}
-        </div>
+        <div className="md:ml-64 h-s">{children}</div>
       </div>
     </SignedIn>
   );

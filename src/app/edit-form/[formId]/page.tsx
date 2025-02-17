@@ -48,7 +48,7 @@ function EditForm({ params }: { params: Promise<{ formId: string }> }) {
       setJsonForms(JSON.parse(result[0].jsonform)[0]);
       setSelectedTheme(result[0].theme || "");
       setSelectedBackground(result[0].background || "");
-      setSelectedStyle(JSON.parse(result[0].style || ""));
+      setSelectedStyle(JSON.parse(result[0].style || "{}"));
     } catch (error) {
       console.error("Error al obtener datos:", error);
     }
@@ -89,7 +89,7 @@ function EditForm({ params }: { params: Promise<{ formId: string }> }) {
               user.primaryEmailAddress?.emailAddress || ""
             )
           )
-        );
+        ).returning({id: JsonForms.id})
 
       console.log("Form updated successfully in the database.");
     } catch (error) {
