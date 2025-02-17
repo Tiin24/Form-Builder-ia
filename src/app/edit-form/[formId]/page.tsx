@@ -55,9 +55,9 @@ function EditForm({ params }: { params: Promise<{ formId: string }> }) {
   }, [user, actualParams?.formId]);
 
   const handleFieldUpdate = (index: number, updatedField: Field) => {
-    if (!jsonForms) return;
+    if (!jsonForms || !jsonForms.fields) return;
 
-    const updatedFields = [...jsonForms.fields];
+    const updatedFields = [...jsonForms?.fields];
     updatedFields[index] = updatedField;
 
     setJsonForms({
@@ -112,9 +112,9 @@ function EditForm({ params }: { params: Promise<{ formId: string }> }) {
   const deleteField = (indexToRemove: number) => {
     if (!jsonForms) return;
 
-    const updatedFields = jsonForms.fields.filter(
+    const updatedFields = jsonForms.fields?.filter(
       (_, index) => index !== indexToRemove
-    );
+    )
 
     setJsonForms({
       ...jsonForms,
@@ -162,9 +162,9 @@ function EditForm({ params }: { params: Promise<{ formId: string }> }) {
         description: "Estilo actualizado correctamente",
       });
     }
-  };
-
-  console.log(selectedStyle);
+  }; 
+  
+  
   return (
     <div className="p-10">
       <div className="flex justify-between items-center">
