@@ -27,7 +27,8 @@ function FormUi({
   selectedStyle,
   formId,
 }: FormUiProps) {
-  const form = jsonForm;
+  const form = Array.isArray(jsonForm) ? jsonForm[0] : jsonForm;
+  console.log(form)
 
   const { user } = useUser();
 

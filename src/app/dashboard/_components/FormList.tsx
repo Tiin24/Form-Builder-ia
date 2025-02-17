@@ -40,7 +40,7 @@ function FormList() {
 
       setFormList(parsedForms);
     }
-  },[user]);
+  }, [user]);
 
   useEffect(() => {
     if (user) {
@@ -53,7 +53,13 @@ function FormList() {
       {formList.slice(0, 6).map((form, index) => (
         <div key={index}>
           <FormListItem
-            jsonForm={form.jsonForm ?? []} // 👈 Aquí garantizamos que nunca sea undefined
+            jsonForm={
+              Array.isArray(form.jsonForm)
+                ? form.jsonForm
+                : form.jsonForm
+                ? [form.jsonForm]
+                : []
+            }
             formRecord={form}
             refreshData={GetFormList}
           />

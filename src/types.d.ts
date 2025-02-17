@@ -35,7 +35,7 @@ export interface FieldEditProps {
 // Definición de FormUiProps
 export interface FormUiProps {
   id?: string;
-  jsonForm?: Form[]; // Aquí permitir un array si realmente lo es
+  jsonForm?: Form[] | Form; // Aquí permitir un array si realmente lo es
   onFieldUpdate?: (index: number, updatedField: Field) => void;
   deleteField?: (index: number) => void;
   selectedTheme?: string;

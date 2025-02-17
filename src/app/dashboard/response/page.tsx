@@ -25,11 +25,13 @@ function Responses() {
     if (result.length > 0) {
       const parsedForms: FormUiProps[] = result.map((item) => ({
         id: item.id,
-        jsonForm: Array.isArray(JSON.parse(item.jsonform)) 
-          ? JSON.parse(item.jsonform) 
+        jsonForm: Array.isArray(JSON.parse(item.jsonform))
+          ? JSON.parse(item.jsonform)
           : [JSON.parse(item.jsonform)], // Asegurar que siempre sea un array
         selectedTheme: item.theme || undefined,
-        selectedStyle: item.style ? { key: "custom", value: item.style } : undefined,
+        selectedStyle: item.style
+          ? { key: "custom", value: item.style }
+          : undefined,
         enabledSignIn: item.enabledSignIn ?? false, // Manejar posibles valores null
       }));
 
@@ -55,7 +57,13 @@ function Responses() {
             <div key={index}>
               <FormListItemResp
                 formRecord={form}
-                jsonForm={form.jsonForm ?? []} // Asegurar siempre un array
+                jsonForm={
+                  Array.isArray(form.jsonForm)
+                    ? form.jsonForm
+                    : form.jsonForm
+                    ? [form.jsonForm]
+                    : []
+                }
               />
             </div>
           ))}
