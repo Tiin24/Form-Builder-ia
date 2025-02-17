@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { db } from "@/db";
 import { JsonForms } from "@/db/schema";
 import { useUser } from "@clerk/nextjs";
@@ -11,7 +11,7 @@ function FormList() {
   const { user } = useUser();
   const [formList, setFormList] = useState<FormUiProps[]>([]); // Tipo FormUiProps[]
 
-  const GetFormList = async () => {
+  const GetFormList = useCallback(async () => {
     if (!user?.primaryEmailAddress?.emailAddress) {
       console.error("User email address is undefined");
       return;
@@ -40,13 +40,13 @@ function FormList() {
 
       setFormList(parsedForms);
     }
-  };
+  },[user]);
 
   useEffect(() => {
     if (user) {
       GetFormList();
     }
-  }, [user]);
+  }, [GetFormList, user]);
 
   return (
     <div className="mt-5 grid grid-cols-2 md:grid-cols-3 gap-5">
