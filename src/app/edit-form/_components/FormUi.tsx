@@ -10,28 +10,106 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import React from "react";
-import { Field, FormUiProps } from "@/types";
+import React, { ChangeEvent, useState } from "react";
+import { Field, FormDataState, FormUiProps } from "@/types";
 import FieldEdit from "./FieldEdit";
+import { db } from "@/db";
+import { userResponses } from "@/db/schema";
+import { useToast } from "@/hooks/use-toast";
+import { v4 as uuidv4 } from "uuid";
+import { useUser } from "@clerk/nextjs";
 
 function FormUi({
   jsonForm,
-  onFieldUpdate,
-  deleteField,
+  onFieldUpdate =() =>{},
+  deleteField =() =>{},
   selectedTheme,
   selectedStyle,
+  formId,
 }: FormUiProps) {
   const form = jsonForm;
 
+  const { user } = useUser();
+
+  const { toast } = useToast();
+
+  const [formData, setFormData] = useState<FormDataState>({});
+
+  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const { name, value, type, checked } = event.target;
+
+    let formattedValue: string | number | boolean = value;
+
+    if (type === "number") {
+      formattedValue = Number(value); // Convierte números
+    } else if (type === "checkbox") {
+      formattedValue = checked;
+    }
+
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: formattedValue,
+    }));
+  };
+
+  const handleSelectChange = (name: string | undefined, value: string) => {
+    if (name) {
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+    }
+  };
+
+  if (!user?.id) {
+    return;
+  }
+  const responseId = uuidv4();
+  const userId = user?.id;
+
+  const onFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+  
+    if (!responseId || !formId || !userId) {
+      throw new Error('Algunos valores requeridos son undefined');
+    }
+    
+
+    try {
+      const result = await db.insert(userResponses).values({
+        id: responseId,
+        jsonResponse: JSON.stringify(formData),
+        createdAt: new Date().toISOString(),
+        formRef: formId,
+        createdBy: userId,
+      });
+  
+      if (result) {
+        if (event.currentTarget) {
+          event.currentTarget.reset();
+        }
+        toast({ description: "Response Submitted Successfully" });
+      } else {
+        toast({ description: "Error while saving your form" });
+      }
+    } catch (error) {
+      console.error("Submission error:", error);
+      toast({ description: "An error occurred while submitting the form" });
+    }
+  };
+
   return (
-    <div
+    <form
       className="border p-5 md:w-[600px] rounded-lg"
       data-theme={selectedTheme}
+      onSubmit={onFormSubmit}
       style={{
-        boxShadow: selectedStyle?.key === 'boxshadow' ? selectedStyle.value : undefined,
-        border: selectedStyle?.key === 'border' ? selectedStyle.value : undefined,
+        boxShadow:
+          selectedStyle?.key === "boxshadow" ? selectedStyle.value : undefined,
+        border:
+          selectedStyle?.key === "border" ? selectedStyle.value : undefined,
       }}
-      >
+    >
       <h2 className="font-bold text-center text-2xl">{form?.formTitle}</h2>
       <h2 className="text-sm text-gray-400 text-center">{form?.formHeading}</h2>
       {form?.fields?.map((field: Field, index: number) => (
@@ -39,7 +117,10 @@ function FormUi({
           {field.fieldType == "select" ? (
             <div className="my-3 w-full">
               <label className="text-xs text-gray-500">{field.label}</label>
-              <Select required={field?.required}>
+              <Select
+                required={field?.required}
+                onValueChange={(v) => handleSelectChange(field.fieldName, v)}
+              >
                 <SelectTrigger className="w-full bg-transparent">
                   <SelectValue placeholder={field.placeholder} />
                 </SelectTrigger>
@@ -77,7 +158,8 @@ function FormUi({
                     typeof item === "string" ? item : item.label;
                   return (
                     <div key={idx} className="flex gap-2 items-center">
-                      <Checkbox />
+                      <Checkbox
+                      />
                       <h2>{itemLabel}</h2>
                     </div>
                   );
@@ -98,6 +180,7 @@ function FormUi({
                 name={field.fieldName}
                 className="bg-transparent"
                 required={field?.required}
+                onChange={(e) => handleInputChange(e)}
               />
             </div>
           )}
@@ -111,7 +194,7 @@ function FormUi({
         </div>
       ))}
       <button className="btn btn-primary">Submit</button>
-    </div>
+    </form>
   );
 }
 

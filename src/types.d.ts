@@ -1,8 +1,10 @@
-interface FieldOption {
+// Definición de FieldOption
+export interface FieldOption {
   label: string;
   value?: string;
 }
 
+// Definición de Field
 export interface Field {
   fieldType?: "select" | "radio" | "checkbox" | "text" | "email" | "password";
   label?: string;
@@ -14,47 +16,56 @@ export interface Field {
 }
 
 export interface Form {
-  id: string;
-  formTitle: string;
+  id?: string;
+  formTitle?: string;
   formHeading?: string;
-  fields: Field[];
+  fields?: Field[];
   theme?: string;
   background?: string;
-  enabledSignIn?: boolean | null; // ✅ Agregado
+  enabledSignIn?: boolean | null;
 }
 
-
+// Definición de FieldEditProps
 export interface FieldEditProps {
   defaultValue: Field;
   onUpdate: (updatedField: Field) => void;
-  deleteField: () => void; // Nueva prop
+  deleteField: () => void;
 }
 
+// Definición de FormUiProps
 export interface FormUiProps {
-  jsonForm?: Form;
-  onFieldUpdate: (index: number, updatedField: Field) => void;
-  deleteField: (index: number) => void;
-  selectedTheme?: string; // Hacemos opcional en caso de que no siempre esté presente
+  id?: string;
+  jsonForm?: Form[]; // Aquí permitir un array si realmente lo es
+  onFieldUpdate?: (index: number, updatedField: Field) => void;
+  deleteField?: (index: number) => void;
+  selectedTheme?: string;
   selectedStyle?: { key: string; value: string };
-  editable: boolean; // Nueva prop para definir si el formulario es editable o no
-  formId: string; // ID del formulario
-  enabledSignIn?: boolean | null; // Estado de autenticación
+  editable?: boolean;
+  formId?: string;
+  enabledSignIn?: boolean | null;
 }
 
-
+// Definición de ControllerProps
 export interface ControllerProps {
   selectedTheme: (theme: string) => void;
   selectedBackground: (background: string) => void;
-  selectedStyle: (style: { key: string; value: string }) => void; // Agregamos selectedStyle
+  selectedStyle: (style: { key: string; value: string }) => void;
 }
 
-export interface JsonFormRecord {
-  id: string;
-    jsonform: string;
-    theme: string;
-    background?: string;
-    style?: { key: string; value: string };
-    createdBy: string;
-    createdAt: string;
-    enabledSignIn: boolean | null;
+// Definición de FormDataState
+export interface FormDataState {
+  [key: string]: string | number | boolean | string[];
+}
+
+
+interface Record {
+  fields: Field;
+  formHeading: string
+  formTitle: string
+}
+
+export interface FormListItemProps{
+  jsonForm: Form[]; 
+  formRecord?: FormUiProps;
+  refreshData?: () => void;
 }

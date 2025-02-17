@@ -10,3 +10,11 @@ export const JsonForms = pgTable("jsonForms", {
   createdAt: varchar("createdAt").notNull(),
   enabledSignIn:boolean('enabledSignIn').default(false)
 });
+
+export const userResponses = pgTable("userResponses", {
+  id: varchar("id").primaryKey(),
+  jsonResponse: text("jsonResponse").notNull(),
+  createdBy: varchar("createdBy").notNull(),
+  createdAt: varchar("createdAt").notNull(),
+  formRef: varchar("formRef").notNull().references(() => JsonForms.id),
+});

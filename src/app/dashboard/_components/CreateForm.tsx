@@ -55,7 +55,7 @@ function CreateForm() {
 
   return (
     <>
-      <Button onClick={() => setOpenDailog(true)}>+ Create Form</Button>
+      <Button className="bg-lime-600" onClick={() => setOpenDailog(true)}>+ Create Form</Button>
       <Dialog open={openDialog}>
         <DialogContent>
           <DialogHeader>
